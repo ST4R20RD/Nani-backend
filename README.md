@@ -123,8 +123,6 @@ address - String
     - address
 - GET /restaurant/:id
 
-  
-
 ## Links
 
 ### Trello/Kanban
