@@ -15,4 +15,11 @@ app.use(express.json());
 const authRoutes = require("./routes/auth.routes");
 app.use("/auth", authRoutes);
 
+const animeRoutes = require("./routes/anime.routes");
+app.use("/anime", animeRoutes);
+
+app.get("/test", (req, res) => {
+    res.send("hello")
+})
+
 app.listen(process.env.PORT);
