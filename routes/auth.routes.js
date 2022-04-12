@@ -11,18 +11,16 @@ const router = express.Router();
 router.post(
   "/signup",
   validate([
-    body("firstName").isLength({ min: 2 }),
-    body("lastName").isLength({ min: 2 }),
+    body("username").isLength({ min: 5}),
     body("email").isEmail(),
     body("password").isLength({ min: 6 }),
   ]),
   async (req, res) => {
-    const { firstName, lastName, email, password } = req.body;
+    const { username, email, password } = req.body;
     try {
       const passwordHash = await bcrypt.hash(password, 10);
       const user = await User.create({
-        firstName,
-        lastName,
+        username,
         email,
         password: passwordHash,
       });

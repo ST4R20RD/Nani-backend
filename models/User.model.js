@@ -4,9 +4,11 @@ const { Schema, model } = mongoose;
 const userSchema = new Schema({
   firstName: {
     type: String,
-    required: true,
   },
   lastName: {
+    type: String,
+  },
+  username: {
     type: String,
     required: true,
   },
@@ -19,6 +21,9 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  watched: [],
+  watching: [],
+  planToWatch: [],
 });
 
 const User = model("User", userSchema);
