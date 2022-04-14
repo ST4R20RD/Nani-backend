@@ -33,6 +33,22 @@ function searchAnime(searchString) {
   }
 }
 
+function getAnimePage(pageNumber) {
+  const pageLimit = 20;
+  const url = `https://kitsu.io/api/edge/anime?page[limit]=${pageLimit}&page[offset]=${
+    pageLimit * (pageNumber - 1)
+  }`;
+  return axios
+    .get(url)
+    .then(function (response) {
+      return response.data.data;
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    });
+}
+
 function isAnimeEqualTo(object1, object2) {
   for (let i = 0; i < object1.length; i++) {
     if (object1[i].id === object2.id) {
@@ -67,6 +83,16 @@ router.get("/search", async (req, res) => {
   } catch (error) {
     res.status(500).json(error);
   }
+});
+
+router.get("/listAnime/page/:pageNumber", async (req, res) => {
+ try {
+  const pageNr = req.params.pageNumber;
+  const items = await getAnimePage(pageNr);
+  res.status(200).json(items);
+ } catch (error) {
+   res.status(500).json(error);
+ } 
 });
 
 router.get("/addList/:id/:listOption", authenticate, async (req, res) => {

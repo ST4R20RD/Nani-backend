@@ -48,10 +48,7 @@ router.post(
             algorithm: "HS256",
             expiresIn: "6h",
           });
-          res.status(200).json({
-            user,
-            token,
-          });
+          res.status(200).json({user,token});
         } else {
           res.status(401).json({ message: "Email or password are incorrect" });
         }
@@ -68,6 +65,11 @@ router.get('/verify', authenticate, (req, res) => {
   res.status(200).json({
     user: req.jwtPayload.user,
   });
+});
+
+router.get("/profile", authenticate, async (req, res) => {
+  const user = await User.findById(req.jwtPayload.user._id);
+  res.status(200).json(user);
 });
 
 module.exports = router;
