@@ -11,7 +11,7 @@ const router = express.Router();
 router.post(
   "/signup",
   validate([
-    body("username").isLength({ min: 5}),
+    body("username").isLength({ min: 5 }),
     body("email").isEmail(),
     body("password").isLength({ min: 6 }),
   ]),
@@ -48,7 +48,7 @@ router.post(
             algorithm: "HS256",
             expiresIn: "6h",
           });
-          res.status(200).json({user,token});
+          res.status(200).json({ user, token });
         } else {
           res.status(401).json({ message: "Email or password are incorrect" });
         }
@@ -61,7 +61,25 @@ router.post(
   }
 );
 
-router.get('/verify', authenticate, (req, res) => {
+// The client makes a API request to this url sending the data in the body
+router.post("/google/info", (req, res) => {
+  const { firstName, lastName, email, image, googleId } = req.body;
+  // the name itself will include the last name
+  try {
+    // Create the user in the DB
+    User.create({ firstName, lastName, googleId, image, email }).then(
+      (response) => {
+        // Save the loggedInInfo in the session
+        // We'll stick to using sessions just to not over complicate the students with tokens and cookies
+        res.status(200).json({ data: response });
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: `${error}` });
+  }
+});
+
+router.get("/verify", authenticate, (req, res) => {
   res.status(200).json({
     user: req.jwtPayload.user,
   });

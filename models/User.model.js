@@ -10,7 +10,7 @@ const userSchema = new Schema({
   },
   username: {
     type: String,
-    required: true,
+    /* required: true, */
   },
   email: {
     type: String,
@@ -19,8 +19,10 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: true,
+    /* required: true, */
   },
+  image: String,
+  googleId: String,
   watched: [],
   watching: [],
   planToWatch: [],
