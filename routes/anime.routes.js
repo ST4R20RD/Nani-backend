@@ -27,8 +27,7 @@ function searchAnime(searchString) {
         return response.data.data;
       })
       .catch(function (error) {
-        // handle error
-        console.log(error);
+        res.status(500).json(error);
       });
   }
 }
@@ -44,8 +43,7 @@ function getAnimePage(pageNumber) {
       return response.data.data;
     })
     .catch(function (error) {
-      // handle error
-      console.log(error);
+      res.status(500).json(error);
     });
 }
 
@@ -75,9 +73,9 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.get("/search", async (req, res) => {
+router.get("/search/:searchBarInput", async (req, res) => {
   try {
-    const { searchBarInput } = req.query;
+    const { searchBarInput } = req.params;
     const search = await searchAnime(searchBarInput);
     res.status(200).json(search);
   } catch (error) {
@@ -134,7 +132,6 @@ router.get("/deleteList/:id", authenticate, async (req, res) => {
     const user = await User.findById(req.jwtPayload.user._id);
     const animeId = req.params.id;
     const anime = await getAnimeData(animeId);
-    console.log(user)
     if (isAnimeEqualTo(user.watched, anime)) {
       const animeIndex = user.watched.id;
       user.watched.splice(animeIndex, 1);
