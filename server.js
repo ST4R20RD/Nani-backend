@@ -18,4 +18,7 @@ app.use("/auth", authRoutes);
 const animeRoutes = require("./routes/anime.routes");
 app.use("/anime", animeRoutes);
 
+const friendRoutes = require("./routes/friend.routes");
+app.use("/friend", friendRoutes);
+
 app.listen(process.env.PORT);

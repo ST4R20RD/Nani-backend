@@ -26,10 +26,14 @@ const userSchema = new Schema({
   watched: [],
   watching: [],
   planToWatch: [],
-  friends: [{
+  following: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
-  }]
+  }],
+  followers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  }],
 });
 
 const User = model("User", userSchema);
