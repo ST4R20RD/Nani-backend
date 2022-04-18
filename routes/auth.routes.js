@@ -6,6 +6,8 @@ const validate = require("../middlewares/validate.middleware");
 const { authenticate } = require("../middlewares/jwt.middleware");
 const { body } = require("express-validator");
 
+/* const passport = require("passport"); */
+
 const router = express.Router();
 
 router.post(
@@ -62,22 +64,85 @@ router.post(
 );
 
 // The client makes a API request to this url sending the data in the body
-router.post("/google/info", (req, res) => {
+router.post("/google/info", async (req, res) => {
   const { firstName, lastName, email, image, googleId } = req.body;
-  // the name itself will include the last name
   try {
-    // Create the user in the DB
-    User.create({ firstName, lastName, googleId, image, email }).then(
-      (response) => {
-        // Save the loggedInInfo in the session
-        // We'll stick to using sessions just to not over complicate the students with tokens and cookies
-        res.status(200).json({ data: response });
-      }
-    );
+    // Check if the user already exists
+    const user = await User.findOne({ email });
+    if (user) {
+      const payload = {
+        user,
+      };
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        algorithm: "HS256",
+        expiresIn: "6h",
+      });
+      res.status(200).json({ user, token });
+    } else {
+      // Create the user in the DB
+      User.create({ firstName, lastName, googleId, image, email }).then(
+        (response) => {
+          // Save the loggedInInfo in the session
+          res.status(200).json({ data: response });
+        }
+      );
+    }
   } catch (error) {
     res.status(500).json({ error: `${error}` });
   }
 });
+
+/* // facebook routes
+router.get(
+  "/facebook",
+  passport.authenticate("sign-in-facebook", {
+    scope: ["email"],
+  })
+);
+
+// route to sign up in facebook
+router.get(
+  "/facebook/callback",
+  passport.authenticate("sign-in-facebook", { session: true }),
+  function (req, res) {
+    try {
+      if (req.user) {
+        const payload = {
+          user: req.user,
+        };
+        const token = jwt.sign(payload, process.env.JWT_SECRET, {
+          algorithm: "HS256",
+          expiresIn: "6h",
+        });
+        res.status(200).json({ user: req.user, token });
+      }
+    } catch (error) {
+      res.status(500).json({ error: `${error}` });
+    }
+  }
+);
+
+// route to sign in in facebook
+router.get(
+  "/facebook/signin",
+  passport.authenticate("sign-up-facebook", { session: true }),
+  function (req, res) {
+    try {
+      if (req.user) {
+        const payload = {
+          user: req.user,
+        };
+        const token = jwt.sign(payload, process.env.JWT_SECRET, {
+          algorithm: "HS256",
+          expiresIn: "6h",
+        });
+        res.status(200).json({ user: req.user, token });
+      }
+    } catch (error) {
+      res.status(500).json({ error: `${error}` });
+    }    
+  }
+); */
 
 router.get("/verify", authenticate, (req, res) => {
   res.status(200).json({
@@ -89,7 +154,5 @@ router.get("/profile", authenticate, async (req, res) => {
   const user = await User.findById(req.jwtPayload.user._id);
   res.status(200).json(user);
 });
-
-
 
 module.exports = router;
