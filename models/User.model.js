@@ -23,6 +23,7 @@ const userSchema = new Schema({
   },
   image: String,
   googleId: String,
+  facebookId: String,
   watched: [],
   watching: [],
   planToWatch: [],

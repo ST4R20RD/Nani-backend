@@ -65,7 +65,7 @@ router.post(
 
 // The client makes a API request to this url sending the data in the body
 router.post("/google/info", async (req, res) => {
-  const { firstName, lastName, email, image, googleId } = req.body;
+  const { username, firstName, lastName, email, image, googleId } = req.body;
   try {
     // Check if the user already exists
     const user = await User.findOne({ email });
@@ -80,15 +80,34 @@ router.post("/google/info", async (req, res) => {
       res.status(200).json({ user, token });
     } else {
       // Create the user in the DB
-      User.create({ firstName, lastName, googleId, image, email }).then(
-        (response) => {
-          // Save the loggedInInfo in the session
-          res.status(200).json({ data: response });
-        }
-      );
+      const user = await User.create({ username, firstName, lastName, googleId, image, email });
+      const payload = {
+        user,
+      };
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        algorithm: "HS256",
+        expiresIn: "6h",
+      });
+      res.status(200).json({ user, token });
     }
   } catch (error) {
     res.status(500).json({ error: `${error}` });
+  }
+});
+
+// The client makes a API request to this url sending the data in the body
+router.post("/facebook/info", (req, res, next) => {
+  const {name, email, image, facebookId} = req.body
+  // the name itself will include the last name
+  try {
+    // Create the user in the DB
+    User.create({firstName: name, facebookId, image, email})
+      .then((response) => {
+        res.status(200).json({data: response})
+      })
+  }
+  catch(error) {
+    res.status(500).json({error: `${error}`})
   }
 });
 
