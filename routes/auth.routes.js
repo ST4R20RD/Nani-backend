@@ -95,7 +95,7 @@ router.post("/google/info", async (req, res) => {
   }
 });
 
-// The client makes a API request to this url sending the data in the body
+/* // The client makes a API request to this url sending the data in the body
 router.post("/facebook/info", (req, res, next) => {
   const {name, email, image, facebookId} = req.body
   // the name itself will include the last name
@@ -109,7 +109,7 @@ router.post("/facebook/info", (req, res, next) => {
   catch(error) {
     res.status(500).json({error: `${error}`})
   }
-});
+}); */
 
 /* // facebook routes
 router.get(
