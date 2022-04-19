@@ -4,9 +4,9 @@ const User = require("../models/User.model");
 
 const router = express.Router();
 
-router.get("/", authenticate, async (req, res) => {
+router.get("/:id", authenticate, async (req, res) => {
     try {
-      const user = await User.findById(req.jwtPayload.user._id).populate("following").populate("followers");
+      const user = await User.findById(req.params.id).populate("following").populate("followers");
       const following = user.following;
       const followers = user.followers;
       res.status(200).json({following,followers});
