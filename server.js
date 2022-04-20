@@ -26,4 +26,7 @@ app.use("/anime", animeRoutes);
 const friendRoutes = require("./routes/friend.routes");
 app.use("/friend", friendRoutes);
 
+const commentsRoutes = require("./routes/comments.routes");
+app.use("/comments", commentsRoutes);
+
 app.listen(process.env.PORT);
