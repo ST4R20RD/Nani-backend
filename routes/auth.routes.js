@@ -80,7 +80,14 @@ router.post("/google/info", async (req, res) => {
       res.status(200).json({ user, token });
     } else {
       // Create the user in the DB
-      const user = await User.create({ username, firstName, lastName, googleId, image, email });
+      const user = await User.create({
+        username,
+        firstName,
+        lastName,
+        googleId,
+        image,
+        email,
+      });
       const payload = {
         user,
       };
@@ -170,8 +177,29 @@ router.get("/verify", authenticate, (req, res) => {
 });
 
 router.get("/profile", authenticate, async (req, res) => {
-  const user = await User.findById(req.jwtPayload.user._id);
-  res.status(200).json(user);
+  try {
+    const user = await User.findById(req.jwtPayload.user._id);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+router.put("/profile", authenticate, async (req, res) => {
+  try {
+    const { username, userId } = req.body;
+    let user = await User.findById(req.jwtPayload.user._id);
+    if (userId === req.jwtPayload.user._id) {
+      user.username = username;
+      user = await user.save();
+      res.status(200).json(user);
+    } else {
+      res.status(401).json({ message: "You are not authorized" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ message: "You are not authorized" });
+  }
 });
 
 module.exports = router;
