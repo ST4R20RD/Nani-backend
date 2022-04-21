@@ -5,6 +5,7 @@ const User = require("../models/User.model");
 const validate = require("../middlewares/validate.middleware");
 const { authenticate } = require("../middlewares/jwt.middleware");
 const { body } = require("express-validator");
+const fileUploader = require("../config/cloudinary.config");
 
 /* const passport = require("passport"); */
 
@@ -185,12 +186,18 @@ router.get("/profile", authenticate, async (req, res) => {
   }
 });
 
-router.put("/profile", authenticate, async (req, res) => {
+router.put("/profile", authenticate, fileUploader.single("image"), async (req, res) => {
   try {
-    const { username, userId } = req.body;
+    console.log(req.file)
+    const { username, userId, image } = req.body;
     let user = await User.findById(req.jwtPayload.user._id);
     if (userId === req.jwtPayload.user._id) {
       user.username = username;
+      if (!image) {
+        user.image;
+      } else {
+        user.image = image;
+      }
       user = await user.save();
       res.status(200).json(user);
     } else {
