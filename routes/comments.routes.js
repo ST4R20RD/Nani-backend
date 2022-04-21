@@ -10,7 +10,6 @@ router.post("/:animeId", authenticate, async (req, res) => {
     const { animeId } = req.params;
     const { content } = req.body;
     const { id } = req.body;
-    console.log(content)
     const comment = await Comment.create({
       id,
       animeId,
@@ -19,7 +18,6 @@ router.post("/:animeId", authenticate, async (req, res) => {
     });
     res.status(200).json(comment);
   } catch (error) {
-    console.log(error)
     res.status(500).json(error);
   }
 });
