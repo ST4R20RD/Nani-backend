@@ -5,10 +5,10 @@ const commentSchema = new Schema({
   id: {
     type: String,
     required: true,
-    unique: true,
   },
   animeId: {
     type: Number,
+    required: true,
   },
   content: {
     type: String,
@@ -30,4 +30,4 @@ const commentSchema = new Schema({
 
 const Comment = model("Comment", commentSchema);
 
- module.exports = Comment;
+module.exports = Comment;
