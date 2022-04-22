@@ -44,6 +44,7 @@ router.post(
       if (user) {
         const passwordCorrect = await bcrypt.compare(password, user.password);
         if (passwordCorrect) {
+          // Payload is passing the whole user
           const payload = {
             user,
           };
