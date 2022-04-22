@@ -8,8 +8,10 @@ const validate = (validations) => {
     if (errors.isEmpty()) {
       return next();
     }
-
-    res.status(400).json({ errors: errors.array() });
+    res.status(400).json({ message: `Validation failed.
+    Username: Must be 5 characters or more.
+    Email: Must be a valid email.
+    Password: Must be 6 characters or more.`, errors: errors.array() });
   };
 };
 
