@@ -52,10 +52,16 @@ router.get("/:id/add", authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.jwtPayload.user._id);
     const friend = await User.findById(req.params.id);
-    if (!isUserEqualTo(user.following, friend)) {
-      user.following.push(friend._id);
-      friend.followers.push(user._id);
+    if (user.following.indexOf(friend._id) !== -1) {
+      const friendIndex = user.following.indexOf(friend._id);
+      user.following.splice(friendIndex, 1);
+      const userIndex = friend.followers.indexOf(user._id);
+      friend.followers.splice(userIndex, 1);
+    } else if (!isUserEqualTo(user.following, friend)) {
+        user.following.push(friend._id);
+        friend.followers.push(user._id);
     }
+    
     user.save();
     friend.save();
     res.status(200).json(user);
