@@ -2,7 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const Comment = require("../models/Comment.model");
 const { authenticate } = require("../middlewares/jwt.middleware");
-const { v4 } = require("uuidv4");
+const { v4: uuidv4 } = require('uuid');
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ router.post("/:animeId", authenticate, async (req, res) => {
     const { content } = req.body;
     const { parentId } = req.body;
     const comment = await Comment.create({
-      id : v4(),
+      id : uuidv4(),
       animeId,
       content,
       parentId,
@@ -20,6 +20,7 @@ router.post("/:animeId", authenticate, async (req, res) => {
     });
     res.status(200).json(comment);
   } catch (error) {
+    console.log(error);
     res.status(500).json(error);
   }
 });
