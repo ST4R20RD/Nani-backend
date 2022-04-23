@@ -14,6 +14,9 @@ const commentSchema = new Schema({
     type: String,
     required: true,
   },
+  parentId: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

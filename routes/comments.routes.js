@@ -2,6 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const Comment = require("../models/Comment.model");
 const { authenticate } = require("../middlewares/jwt.middleware");
+const { uuid } = require("uuidv4");
 
 const router = express.Router();
 
@@ -9,11 +10,12 @@ router.post("/:animeId", authenticate, async (req, res) => {
   try {
     const { animeId } = req.params;
     const { content } = req.body;
-    const { id } = req.body;
+    const { parentId } = req.body;
     const comment = await Comment.create({
-      id,
+      id : uuid(),
       animeId,
       content,
+      parentId,
       author: req.jwtPayload.user._id,
     });
     res.status(200).json(comment);
@@ -51,7 +53,7 @@ router.put("/:commentId", authenticate, async (req, res) => {
     const { content } = req.body;
     let comment = await Comment.findOne({id: commentId});
     if (comment.author.toString() === req.jwtPayload.user._id) {
-      comment.content = content;
+      comment.content = content + " (edited)";
       comment = await comment.save();
       res.status(200).json(comment);
     }
