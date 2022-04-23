@@ -46,7 +46,11 @@ router.post(
         if (passwordCorrect) {
           // Payload is passing the whole user
           const payload = {
-            user,
+            user: {
+              _id: user._id,
+              username: user.username,
+              email: user.email,
+            },
           };
           const token = jwt.sign(payload, process.env.JWT_SECRET, {
             algorithm: "HS256",
@@ -73,7 +77,11 @@ router.post("/google/info", async (req, res) => {
     const user = await User.findOne({ email });
     if (user) {
       const payload = {
-        user,
+        user: {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+        },
       };
       const token = jwt.sign(payload, process.env.JWT_SECRET, {
         algorithm: "HS256",
@@ -91,7 +99,11 @@ router.post("/google/info", async (req, res) => {
         email,
       });
       const payload = {
-        user,
+        user: {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+        },
       };
       const token = jwt.sign(payload, process.env.JWT_SECRET, {
         algorithm: "HS256",
@@ -187,27 +199,34 @@ router.get("/profile", authenticate, async (req, res) => {
   }
 });
 
-router.put("/profile", authenticate, fileUploader.single("image"), async (req, res) => {
-  try {
-    console.log(req.file)
-    const { username, userId, image } = req.body;
-    let user = await User.findById(req.jwtPayload.user._id);
-    if (userId === req.jwtPayload.user._id) {
-      user.username = username;
-      if (!image) {
-        user.image;
+router.put(
+  "/profile",
+  authenticate,
+  async (req, res) => {
+    try {
+      const { username, userId, image } = req.body;
+      let user = await User.findById(req.jwtPayload.user._id);
+      if (userId === req.jwtPayload.user._id) {
+        user.username = username;
+        if (!image) {
+          user.image;
+        } else {
+          user.image = image;
+        }
+        user = await user.save();
+        res.status(200).json(user);
       } else {
-        user.image = image;
+        res.status(401).json({ message: "You are not authorized" });
       }
-      user = await user.save();
-      res.status(200).json(user);
-    } else {
+    } catch (error) {
+      console.log(error);
       res.status(401).json({ message: "You are not authorized" });
     }
-  } catch (error) {
-    console.log(error);
-    res.status(401).json({ message: "You are not authorized" });
   }
+);
+
+router.post("/upload", authenticate, fileUploader.single("image"), (req, res) => {
+  res.json(req.file);
 });
 
 module.exports = router;
