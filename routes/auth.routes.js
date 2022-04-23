@@ -6,6 +6,7 @@ const validate = require("../middlewares/validate.middleware");
 const { authenticate } = require("../middlewares/jwt.middleware");
 const { body } = require("express-validator");
 const fileUploader = require("../config/cloudinary.config");
+const axios = require("axios");
 
 /* const passport = require("passport"); */
 
@@ -19,15 +20,21 @@ router.post(
     body("password").isLength({ min: 6 }),
   ]),
   async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, confirmPassword } = req.body;
     try {
-      const passwordHash = await bcrypt.hash(password, 10);
-      const user = await User.create({
-        username,
-        email,
-        password: passwordHash,
-      });
-      res.status(200).json(user);
+      if (password !== confirmPassword) {
+        return res.status(400).json({
+          message: "Passwords do not match",
+        });
+      } else {
+        const passwordHash = await bcrypt.hash(password, 10);
+        const user = await User.create({
+          username,
+          email,
+          password: passwordHash,
+        });
+        res.status(200).json(user);
+      }
     } catch (error) {
       res.status(500).json(error);
     }
@@ -38,30 +45,40 @@ router.post(
   "/login",
   validate([body("email").isEmail(), body("password").isLength({ min: 6 })]),
   async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, captchaToken } = req.body;
     try {
-      const user = await User.findOne({ email });
-      if (user) {
-        const passwordCorrect = await bcrypt.compare(password, user.password);
-        if (passwordCorrect) {
-          // Payload is passing the whole user
-          const payload = {
-            user: {
-              _id: user._id,
-              username: user.username,
-              email: user.email,
-            },
-          };
-          const token = jwt.sign(payload, process.env.JWT_SECRET, {
-            algorithm: "HS256",
-            expiresIn: "6h",
-          });
-          res.status(200).json({ user, token });
+      // Calls the API from Google to verify the Captcha response
+      const respond = await axios.post(
+        `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.CAPTCHA_SECRET_KEY}&response=${captchaToken}`
+      );
+      // If the Captcha is valid (it's not a bot and it was checked)
+      if (respond.data.success) {
+        const user = await User.findOne({ email });
+        if (user) {
+          const passwordCorrect = await bcrypt.compare(password, user.password);
+          if (passwordCorrect) {
+            const payload = {
+              user: {
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+              },
+            };
+            const token = jwt.sign(payload, process.env.JWT_SECRET, {
+              algorithm: "HS256",
+              expiresIn: "6h",
+            });
+            res.status(200).json({ user, token });
+          } else {
+            res
+              .status(401)
+              .json({ message: "Email or password are incorrect" });
+          }
         } else {
           res.status(401).json({ message: "Email or password are incorrect" });
         }
       } else {
-        res.status(401).json({ message: "Email or password are incorrect" });
+        res.status(401).json({ message: "Captcha failed" });
       }
     } catch (error) {
       res.status(500).json(error);
@@ -199,34 +216,35 @@ router.get("/profile", authenticate, async (req, res) => {
   }
 });
 
-router.put(
-  "/profile",
-  authenticate,
-  async (req, res) => {
-    try {
-      const { username, userId, image } = req.body;
-      let user = await User.findById(req.jwtPayload.user._id);
-      if (userId === req.jwtPayload.user._id) {
-        user.username = username;
-        if (!image) {
-          user.image;
-        } else {
-          user.image = image;
-        }
-        user = await user.save();
-        res.status(200).json(user);
+router.put("/profile", authenticate, async (req, res) => {
+  try {
+    const { username, userId, image } = req.body;
+    let user = await User.findById(req.jwtPayload.user._id);
+    if (userId === req.jwtPayload.user._id) {
+      user.username = username;
+      if (!image) {
+        user.image;
       } else {
-        res.status(401).json({ message: "You are not authorized" });
+        user.image = image;
       }
-    } catch (error) {
-      console.log(error);
+      user = await user.save();
+      res.status(200).json(user);
+    } else {
       res.status(401).json({ message: "You are not authorized" });
     }
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ message: "You are not authorized" });
+  }
+});
+
+router.post(
+  "/upload",
+  authenticate,
+  fileUploader.single("image"),
+  (req, res) => {
+    res.json(req.file);
   }
 );
-
-router.post("/upload", authenticate, fileUploader.single("image"), (req, res) => {
-  res.json(req.file);
-});
 
 module.exports = router;
