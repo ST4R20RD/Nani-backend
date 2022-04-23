@@ -54,7 +54,7 @@ router.put("/:commentId", authenticate, async (req, res) => {
     const { content } = req.body;
     let comment = await Comment.findOne({id: commentId});
     if (comment.author.toString() === req.jwtPayload.user._id) {
-      comment.content = content + " (edited)";
+      comment.content = content;
       comment = await comment.save();
       res.status(200).json(comment);
     }
