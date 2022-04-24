@@ -36,4 +36,7 @@ app.use("/friend", friendRoutes);
 const commentsRoutes = require("./routes/comments.routes");
 app.use("/comments", commentsRoutes);
 
+const emailRoutes = require("./routes/email.routes");
+app.use("/email", emailRoutes);
+
 app.listen(process.env.PORT);
