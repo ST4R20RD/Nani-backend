@@ -217,6 +217,16 @@ router.get("/profile", authenticate, async (req, res) => {
   }
 });
 
+router.get("/:senderId", authenticate, async (req, res) => {
+  try {
+    const { senderId } = req.params;
+    const user = await User.findById(senderId);
+    res.status(200).json(user.username);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 router.put("/profile", authenticate, async (req, res) => {
   try {
     const { username, userId, image } = req.body;

@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const { Server } = require("socket.io");
 const cors = require("cors");
 dotenv.config();
 /* const passport = require("passport"); */
@@ -40,3 +41,46 @@ const emailRoutes = require("./routes/email.routes");
 app.use("/email", emailRoutes);
 
 app.listen(process.env.PORT);
+
+const io = new Server({ 
+  cors: {
+      origin: `http://localhost:3000`
+  }
+});
+
+let onlineUsers = [];
+
+const addNewUser = (userID, socketId) => {
+  !onlineUsers.some((user) => {
+    user.userID === userID
+  }) &&
+    onlineUsers.push({ userID, socketId });
+};
+
+const removeUser = (socketId) => {
+  onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
+};
+
+const getUser = (userID) => {
+  return onlineUsers.find((user) => user.userID === userID);
+};
+
+io.on("connection", (socket) => {
+  socket.on("newUser", (userID) => {
+    addNewUser(userID, socket.id);
+  });
+
+  socket.on("sendNotification", ({ senderId, receiverId, type }) => {
+    const receiver = getUser(receiverId);
+    io.to(receiver.socketId).emit("getNotification", {
+      senderId,
+      type,
+    });
+  });
+
+  socket.on("disconnect", () => {
+    removeUser(socket.id);
+  });
+});
+
+io.listen(process.env.SOCKETPORT);
