@@ -70,11 +70,12 @@ io.on("connection", (socket) => {
     addNewUser(userID, socket.id);
   });
 
-  socket.on("sendNotification", ({ senderId, receiverId, type }) => {
+  socket.on("sendNotification", ({ senderId, receiverId, type, url }) => {
     const receiver = getUser(receiverId);
     io.to(receiver.socketId).emit("getNotification", {
       senderId,
       type,
+      url
     });
   });
 
