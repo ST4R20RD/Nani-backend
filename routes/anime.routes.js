@@ -99,6 +99,7 @@ router.get("/addList/:id/:listOption", authenticate, async (req, res) => {
     const user = await User.findById(req.jwtPayload.user._id);
     const animeId = req.params.id;
     const anime = await getAnimeData(animeId);
+    const isInList = isAnimeEqualTo(user[listOp], anime);
 
     if (isAnimeEqualTo(user.watched, anime)) {
       const animeIndex = user.watched.id;
@@ -121,7 +122,7 @@ router.get("/addList/:id/:listOption", authenticate, async (req, res) => {
     }
     
     await user.save();
-    res.status(200).json(user);
+    res.status(200).json(isInList || false);
   } catch (error) {
     res.status(500).json(error);
   }
