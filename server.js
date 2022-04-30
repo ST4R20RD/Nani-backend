@@ -23,10 +23,6 @@ app.use(cors());
 
 app.use(express.json());
 
-/* app.get("/", (req, res) => {
-  console.log("Hello World");
-}); */
-
 /* app.use(passport.initialize()); */
 
 const authRoutes = require("./routes/auth.routes");
@@ -46,11 +42,13 @@ app.use("/email", emailRoutes);
 
 app.listen(process.env.PORT);
 
-const io = new Server({
+/* const io = new Server({
   cors: {
     origin: `http://localhost:3000`,
   },
-});
+}); */
+
+const io = new Server(cors());
 
 let onlineUsers = [];
 
