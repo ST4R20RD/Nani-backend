@@ -23,6 +23,10 @@ app.use(cors());
 
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
+
 /* app.use(passport.initialize()); */
 
 const authRoutes = require("./routes/auth.routes");
@@ -42,19 +46,18 @@ app.use("/email", emailRoutes);
 
 app.listen(process.env.PORT);
 
-const io = new Server({ 
+const io = new Server({
   cors: {
-      origin: `http://localhost:3000`
-  }
+    origin: `http://localhost:3000`,
+  },
 });
 
 let onlineUsers = [];
 
 const addNewUser = (userID, socketId) => {
   !onlineUsers.some((user) => {
-    user.userID === userID
-  }) &&
-    onlineUsers.push({ userID, socketId });
+    user.userID === userID;
+  }) && onlineUsers.push({ userID, socketId });
 };
 
 const removeUser = (socketId) => {
@@ -75,7 +78,7 @@ io.on("connection", (socket) => {
     io.to(receiver.socketId).emit("getNotification", {
       senderId,
       type,
-      url
+      url,
     });
   });
 
