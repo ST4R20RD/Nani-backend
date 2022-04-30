@@ -23,9 +23,9 @@ app.use(cors());
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
+/* app.get("/", (req, res) => {
   console.log("Hello World");
-});
+}); */
 
 /* app.use(passport.initialize()); */
 
