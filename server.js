@@ -48,9 +48,11 @@ app.use("/email", emailRoutes);
   },
 }); */
 
-const io = new Server({
+const server = require("http").createServer(app);
+
+const io = require("socket.io")(server, {
   cors: {
-    origin: `https://nani-app.netlify.app`,
+     origin: "https://nani-app.netlify.app",
   },
 });
 
@@ -89,4 +91,6 @@ io.on("connection", (socket) => {
   });
 });
 
-io.listen(process.env.PORT);
+/* io.listen(process.env.SOCKETPORT); */
+
+server.listen(process.env.PORT || 5000);
