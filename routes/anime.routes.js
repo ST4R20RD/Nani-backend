@@ -84,13 +84,13 @@ router.get("/search/:searchBarInput", async (req, res) => {
 });
 
 router.get("/listAnime/page/:pageNumber", async (req, res) => {
- try {
-  const pageNr = req.params.pageNumber;
-  const items = await getAnimePage(pageNr);
-  res.status(200).json(items);
- } catch (error) {
-   res.status(500).json(error);
- } 
+  try {
+    const pageNr = req.params.pageNumber;
+    const items = await getAnimePage(pageNr);
+    res.status(200).json(items);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 
 router.get("/addList/:id/:listOption", authenticate, async (req, res) => {
@@ -102,16 +102,25 @@ router.get("/addList/:id/:listOption", authenticate, async (req, res) => {
     const isInList = isAnimeEqualTo(user[listOp], anime);
 
     if (isAnimeEqualTo(user.watched, anime)) {
-      const animeIndex = user.watched.id;
-      user.watched.splice(animeIndex, 1);
+      user.watched.map((item, index) => {
+        if (item.id === anime.id) {
+          user.watched.splice(index, 1);
+        }
+      });
     }
     if (isAnimeEqualTo(user.watching, anime)) {
-      const animeIndex = user.watching.id;
-      user.watching.splice(animeIndex, 1);
+      user.watching.map((item, index) => {
+        if (item.id === anime.id) {
+          user.watching.splice(index, 1);
+        }
+      });
     }
     if (isAnimeEqualTo(user.planToWatch, anime)) {
-      const animeIndex = user.planToWatch.id;
-      user.planToWatch.splice(animeIndex, 1);
+      user.planToWatch.map((item, index) => {
+        if (item.id === anime.id) {
+          user.planToWatch.splice(index, 1);
+        }
+      });
     }
     if (listOp === "watched") {
       user.watched.push(anime);
@@ -120,7 +129,7 @@ router.get("/addList/:id/:listOption", authenticate, async (req, res) => {
     } else if (listOp === "planToWatch") {
       user.planToWatch.push(anime);
     }
-    
+
     await user.save();
     res.status(200).json(isInList || false);
   } catch (error) {
@@ -134,16 +143,25 @@ router.get("/deleteList/:id", authenticate, async (req, res) => {
     const animeId = req.params.id;
     const anime = await getAnimeData(animeId);
     if (isAnimeEqualTo(user.watched, anime)) {
-      const animeIndex = user.watched.id;
-      user.watched.splice(animeIndex, 1);
+      user.watched.map((anime, index) => {
+        if (anime.id === animeId) {
+          user.watched.splice(index, 1);
+        }
+      });
     }
     if (isAnimeEqualTo(user.watching, anime)) {
-      const animeIndex = user.watching.id;
-      user.watching.splice(animeIndex, 1);
+      user.watching.map((anime, index) => {
+        if (anime.id === animeId) {
+          user.watching.splice(index, 1);
+        }
+      });
     }
     if (isAnimeEqualTo(user.planToWatch, anime)) {
-      const animeIndex = user.planToWatch.id;
-      user.planToWatch.splice(animeIndex, 1);
+      user.planToWatch.map((anime, index) => {
+        if (anime.id === animeId) {
+          user.planToWatch.splice(index, 1);
+        }
+      });
     }
     await user.save();
     res.status(200).json(user);
