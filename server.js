@@ -42,13 +42,13 @@ app.use("/email", emailRoutes);
 
 app.listen(process.env.PORT);
 
-/* const io = new Server({
+const io = new Server({
   cors: {
     origin: `http://localhost:3000`,
   },
-}); */
+});
 
-const io = new Server(cors());
+/* const io = new Server(cors()); */
 
 let onlineUsers = [];
 
