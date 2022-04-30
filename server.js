@@ -40,7 +40,7 @@ app.use("/comments", commentsRoutes);
 const emailRoutes = require("./routes/email.routes");
 app.use("/email", emailRoutes);
 
-app.listen(process.env.PORTAPP);
+app.listen(process.env.PORT);
 
 /* const io = new Server({
   cors: {
@@ -85,4 +85,4 @@ io.on("connection", (socket) => {
   });
 });
 
-io.listen(process.env.PORT);
+io.listen(process.env.SOCKETPORT);
