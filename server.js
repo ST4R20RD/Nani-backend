@@ -40,6 +40,7 @@ app.use("/comments", commentsRoutes);
 const emailRoutes = require("./routes/email.routes");
 app.use("/email", emailRoutes);
 
+// Code for LOCALHOST
 /* app.listen(process.env.PORT); */
 
 /* const io = new Server({
@@ -48,8 +49,8 @@ app.use("/email", emailRoutes);
   },
 }); */
 
+// Code for NETLIFY and HEROKU
 const server = require("http").createServer(app);
-
 const io = require("socket.io")(server, {
   cors: {
      origin: "https://nani-app.netlify.app",
@@ -91,6 +92,8 @@ io.on("connection", (socket) => {
   });
 });
 
+// Code for LOCALHOST
 /* io.listen(process.env.SOCKETPORT); */
 
+// Code for NETLIFY and HEROKU
 server.listen(process.env.PORT || 5000);
