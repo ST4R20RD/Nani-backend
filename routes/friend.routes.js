@@ -58,10 +58,10 @@ router.get("/:id/add", authenticate, async (req, res) => {
       const userIndex = friend.followers.indexOf(user._id);
       friend.followers.splice(userIndex, 1);
     } else if (!isUserEqualTo(user.following, friend)) {
-        user.following.push(friend._id);
-        friend.followers.push(user._id);
+      user.following.push(friend._id);
+      friend.followers.push(user._id);
     }
-    
+
     user.save();
     friend.save();
     res.status(200).json(user);
