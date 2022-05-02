@@ -41,16 +41,15 @@ const emailRoutes = require("./routes/email.routes");
 app.use("/email", emailRoutes);
 
 // Code for LOCALHOST
-/* app.listen(process.env.PORT); */
+const server = require("http").createServer(app);
 
-/* const io = new Server({
+/* const io = require("socket.io")(server, {
   cors: {
-    origin: `http://localhost:3000`,
+    origin: "http://localhost:3000",
   },
 }); */
 
 // Code for NETLIFY and HEROKU
-const server = require("http").createServer(app);
 const io = require("socket.io")(server, {
   cors: {
      origin: "https://nani-app.netlify.app",
