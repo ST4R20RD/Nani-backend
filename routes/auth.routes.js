@@ -202,12 +202,14 @@ router.get(
   }
 ); */
 
+/* Verifying the user. */
 router.post("/verify", authenticate, (req, res) => {
   res.status(200).json({
     user: req.jwtPayload.user,
   });
 });
 
+/* Getting the user profile. */
 router.get("/profile", authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.jwtPayload.user._id);
@@ -217,6 +219,7 @@ router.get("/profile", authenticate, async (req, res) => {
   }
 });
 
+/* Getting the username of the user that sent the message. */
 router.get("/:senderId", authenticate, async (req, res) => {
   try {
     const { senderId } = req.params;
@@ -227,6 +230,7 @@ router.get("/:senderId", authenticate, async (req, res) => {
   }
 });
 
+/* Updating the user profile. */
 router.put("/profile", authenticate, async (req, res) => {
   try {
     const { username, userId, image } = req.body;
