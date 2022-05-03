@@ -79,11 +79,10 @@ io.on("connection", (socket) => {
     addNewUser(userID, socket.id);
   });
 
-  socket.on("sendNotification", ({ senderId, receiverId, type, url }) => {
+  socket.on("sendNotification", ({ senderUsername, receiverId, type, url }) => {
     const receiver = getUser(receiverId);
     io.to(receiver.socketId).emit("getNotification", {
-      senderId,
-      type,
+      notification: `${senderUsername} ${type}`,
       url,
     });
   });
