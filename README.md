@@ -10,7 +10,7 @@ Describe your project in one/two lines.
 -  **Signup:** As an anon I can sign up in the platform so that I can start browsing animes
 -  **Login:** As a user I can login to the platform so that I can see my favorite animes
 -  **Logout:** As a user I can logout from the platform so no one else can use it
--  **Chenge password:** As a user I can change my password to login to the platform
+-  **Change password:** As a user I can change my password to login to the platform
 -  **Add Animes to your lists** As a user I can add a anime so that other user can check what animes I am watching, I have watched, I have planned to watch
 -  **List Animes** As a user I want to see the animes so that I can choose one to watch
 -  **Search Animes** As a user I want to search animes by name so that I can add them to my lists
