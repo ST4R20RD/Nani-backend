@@ -6,8 +6,8 @@ const router = express.Router();
 
 // get all people signed up
 router.get("/", authenticate, async (req, res) => {
-  const users = await User.find();
-  res.status(200).json(users);
+  const friends = await User.find({_id: {$ne: req.jwtPayload.user._id}});
+  res.status(200).json(friends);
 });
 
 // get specific user in the database with id
