@@ -47,6 +47,18 @@ function getAnimePage(pageNumber) {
     });
 }
 
+function getPopularAnime() {
+  const url = "https://kitsu.io/api/edge/anime?sort=popularityRank";
+  return axios
+    .get(url)
+    .then(function (response) {
+      return response.data.data;
+    })
+    .catch(function (error) {
+      res.status(500).json(error);
+    });
+}
+
 function isAnimeEqualTo(object1, object2) {
   for (let i = 0; i < object1.length; i++) {
     if (object1[i].id === object2.id) {
@@ -55,10 +67,19 @@ function isAnimeEqualTo(object1, object2) {
   }
 }
 
-router.get("/home", async (req, res) => {
+router.get("/trending", async (req, res) => {
   try {
-    const trend = await getTrendingAnime();
+      const trend = await getTrendingAnime();
     res.status(200).json(trend);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+router.get("/popular", async (req, res) => {
+  try {
+      const popular = await getPopularAnime();
+    res.status(200).json(popular);
   } catch (error) {
     res.status(500).json(error);
   }
