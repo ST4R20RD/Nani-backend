@@ -74,7 +74,7 @@ Each anime page:
 - /profile - profile page
 - /search - search animes
 - /friends - search users
-- /Follow/:id - ?
+- /Follow/:id - see followers/following
 - /friendProfile/:friendId - friend profile page
 - /anime/:animeId - anime details page
 - /* - 404 page
