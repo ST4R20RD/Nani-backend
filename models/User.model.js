@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
+// Schema for the user
 const userSchema = new Schema({
   firstName: {
     type: String,
@@ -10,7 +11,6 @@ const userSchema = new Schema({
   },
   username: {
     type: String,
-    /* required: true, */
   },
   email: {
     type: String,
@@ -23,7 +23,6 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    /* required: true, */
   },
   image: String,
   googleId: String,
@@ -31,14 +30,18 @@ const userSchema = new Schema({
   watched: [],
   watching: [],
   planToWatch: [],
-  following: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
-  }],
-  followers: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
-  }],
+  following: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  followers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
 const User = model("User", userSchema);

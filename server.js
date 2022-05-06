@@ -4,39 +4,34 @@ const mongoose = require("mongoose");
 const { Server } = require("socket.io");
 const cors = require("cors");
 dotenv.config();
-/* const passport = require("passport"); */
 
+// Connects to mongoose
 mongoose.connect(process.env.MONGO_DB_URL);
 
 const app = express();
 
-/* require('./passport/facebook-auth'); */
-
+// Use cors so the backend can communicate with the frontend
 app.use(cors());
-
-/* app.use(
-    cors({
-      credentials: true,
-      origin: process.env.ORIGIN || 'http://localhost:3000'
-    })
-  ); */
 
 app.use(express.json());
 
-/* app.use(passport.initialize()); */
-
+// Routes for authentication
 const authRoutes = require("./routes/auth.routes");
 app.use("/auth", authRoutes);
 
+// Routes for anime
 const animeRoutes = require("./routes/anime.routes");
 app.use("/anime", animeRoutes);
 
+// Routes for friends
 const friendRoutes = require("./routes/friend.routes");
 app.use("/friend", friendRoutes);
 
+// Routes for comments
 const commentsRoutes = require("./routes/comments.routes");
 app.use("/comments", commentsRoutes);
 
+// Routes for emails
 const emailRoutes = require("./routes/email.routes");
 app.use("/email", emailRoutes);
 
@@ -59,26 +54,26 @@ const io = require("socket.io")(server, {
 });
 
 let onlineUsers = [];
-
+// Socket.io for adding a new user
 const addNewUser = (userID, socketId) => {
   !onlineUsers.some((user) => {
     user.userID === userID;
   }) && onlineUsers.push({ userID, socketId });
 };
-
+// Socket.io for removing a user
 const removeUser = (socketId) => {
   onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
 };
-
+// Socket.io for gegtinf a user
 const getUser = (userID) => {
   return onlineUsers.find((user) => user.userID === userID);
 };
-
+// Connects to socket.io
 io.on("connection", (socket) => {
   socket.on("newUser", (userID) => {
     addNewUser(userID, socket.id);
   });
-
+  // Sends a notification using socket.io
   socket.on("sendNotification", ({ senderUsername, receiverId, type, url }) => {
     const receiver = getUser(receiverId);
     io.to(receiver.socketId).emit("getNotification", {
@@ -86,7 +81,7 @@ io.on("connection", (socket) => {
       url,
     });
   });
-
+  // Disconnect from socket.io
   socket.on("disconnect", () => {
     removeUser(socket.id);
   });

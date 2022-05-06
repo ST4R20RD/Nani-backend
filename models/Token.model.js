@@ -1,5 +1,6 @@
 const { Schema, model, SchemaTypes } = require('mongoose');
 
+// Schema for the tokens
 const tokenSchema = new Schema({
     userId: {
         type: Schema.Types.ObjectId,

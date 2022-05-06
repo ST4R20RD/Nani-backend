@@ -8,10 +8,10 @@ const { body } = require("express-validator");
 const fileUploader = require("../config/cloudinary.config");
 const axios = require("axios");
 
-/* const passport = require("passport"); */
-
+// Creates the express router
 const router = express.Router();
 
+// Route to signup into the application
 router.post(
   "/signup",
   validate([
@@ -22,6 +22,7 @@ router.post(
   async (req, res) => {
     const { username, email, password, confirmPassword } = req.body;
     try {
+      // Checks both password are the same
       if (password !== confirmPassword) {
         return res.status(400).json({
           message: "Passwords do not match",
@@ -42,6 +43,7 @@ router.post(
   }
 );
 
+// Route to login into the application
 router.post(
   "/login",
   validate([body("email").isEmail(), body("password").isLength({ min: 6 })]),
@@ -134,82 +136,14 @@ router.post("/google/info", async (req, res) => {
   }
 });
 
-/* // The client makes a API request to this url sending the data in the body
-router.post("/facebook/info", (req, res, next) => {
-  const {name, email, image, facebookId} = req.body
-  // the name itself will include the last name
-  try {
-    // Create the user in the DB
-    User.create({firstName: name, facebookId, image, email})
-      .then((response) => {
-        res.status(200).json({data: response})
-      })
-  }
-  catch(error) {
-    res.status(500).json({error: `${error}`})
-  }
-}); */
-
-/* // facebook routes
-router.get(
-  "/facebook",
-  passport.authenticate("sign-in-facebook", {
-    scope: ["email"],
-  })
-);
-
-// route to sign up in facebook
-router.get(
-  "/facebook/callback",
-  passport.authenticate("sign-in-facebook", { session: true }),
-  function (req, res) {
-    try {
-      if (req.user) {
-        const payload = {
-          user: req.user,
-        };
-        const token = jwt.sign(payload, process.env.JWT_SECRET, {
-          algorithm: "HS256",
-          expiresIn: "6h",
-        });
-        res.status(200).json({ user: req.user, token });
-      }
-    } catch (error) {
-      res.status(500).json({ error: `${error}` });
-    }
-  }
-);
-
-// route to sign in in facebook
-router.get(
-  "/facebook/signin",
-  passport.authenticate("sign-up-facebook", { session: true }),
-  function (req, res) {
-    try {
-      if (req.user) {
-        const payload = {
-          user: req.user,
-        };
-        const token = jwt.sign(payload, process.env.JWT_SECRET, {
-          algorithm: "HS256",
-          expiresIn: "6h",
-        });
-        res.status(200).json({ user: req.user, token });
-      }
-    } catch (error) {
-      res.status(500).json({ error: `${error}` });
-    }    
-  }
-); */
-
-/* Verifying the user. */
+// Route to verify the user
 router.post("/verify", authenticate, (req, res) => {
   res.status(200).json({
     user: req.jwtPayload.user,
   });
 });
 
-/* Getting the user profile. */
+// Route to get the user profile
 router.get("/profile", authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.jwtPayload.user._id);
@@ -219,7 +153,7 @@ router.get("/profile", authenticate, async (req, res) => {
   }
 });
 
-/* Getting the username of the user that sent the message. */
+// Route to get the username of the user that sent the message
 router.get("/:senderId", authenticate, async (req, res) => {
   try {
     const { senderId } = req.params;
@@ -230,7 +164,7 @@ router.get("/:senderId", authenticate, async (req, res) => {
   }
 });
 
-/* Updating the user profile. */
+// Route to update the user profile
 router.put("/profile", authenticate, async (req, res) => {
   try {
     const { username, userId, image } = req.body;
@@ -253,6 +187,7 @@ router.put("/profile", authenticate, async (req, res) => {
   }
 });
 
+// Route to upload an image to cloudinary
 router.post(
   "/upload",
   authenticate,

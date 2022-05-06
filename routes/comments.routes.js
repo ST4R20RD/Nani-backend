@@ -4,8 +4,10 @@ const Comment = require("../models/Comment.model");
 const { authenticate } = require("../middlewares/jwt.middleware");
 const { v4: uuidv4 } = require('uuid');
 
+// Express router
 const router = express.Router();
 
+// Route to post a comment to an anime
 router.post("/:animeId", authenticate, async (req, res) => {
   try {
     const { animeId } = req.params;
@@ -25,6 +27,7 @@ router.post("/:animeId", authenticate, async (req, res) => {
   }
 });
 
+// Route to get the comments in an anime
 router.get("/:animeId", async (req, res) => {
   try {
     const { animeId } = req.params;
@@ -35,6 +38,7 @@ router.get("/:animeId", async (req, res) => {
   }
 });
 
+// Route to delete the comments in an anime
 router.delete("/:commentId", authenticate, async (req, res) => {
   try {
     const { commentId } = req.params;
@@ -48,6 +52,7 @@ router.delete("/:commentId", authenticate, async (req, res) => {
   }
 });
 
+// Route to update the comments in an anime
 router.put("/:commentId", authenticate, async (req, res) => {
   try {
     const { commentId } = req.params;

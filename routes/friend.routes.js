@@ -2,15 +2,16 @@ const express = require("express");
 const { authenticate } = require("../middlewares/jwt.middleware");
 const User = require("../models/User.model");
 
+// Express router
 const router = express.Router();
 
-// get all people signed up
+// Get all people signed up
 router.get("/", authenticate, async (req, res) => {
   const friends = await User.find({_id: {$ne: req.jwtPayload.user._id}});
   res.status(200).json(friends);
 });
 
-// get specific user in the database with id
+// Get specific user in the database with id
 router.get("/:id", authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
@@ -24,7 +25,7 @@ router.get("/:id", authenticate, async (req, res) => {
   }
 });
 
-// get searched user in the database with mathing query for username
+// Get searched user in the database with mathing query for username
 router.get("/search/:searchBarInput", authenticate, async (req, res) => {
   try {
     const { searchBarInput } = req.params;
@@ -37,14 +38,7 @@ router.get("/search/:searchBarInput", authenticate, async (req, res) => {
   }
 });
 
-/**
- * If the array is empty, return false. If the array is not empty, loop through the array and check if
- * the id of the object in the array is equal to the id of the object passed in as the second argument.
- * If it is, return true. If it isn't, return false
- * @param object1 - the array of users that have liked the post
- * @param object2 - the user that is currently logged in
- * @returns A boolean value.
- */
+// Function to check if two users are equal
 function isUserEqualTo(object1, object2) {
   if (object1.length === 0) return false;
   for (let i = 0; i <= object1.length; i++) {
