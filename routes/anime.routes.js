@@ -171,7 +171,7 @@ router.get("/addList/:id/:listOption", authenticate, async (req, res) => {
   }
 });
 
-// Route to delete an anime from a list of the user
+// Route to delete an anime from a list of the user (watched, watching, planToWatch)
 router.get("/deleteList/:id", authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.jwtPayload.user._id);
