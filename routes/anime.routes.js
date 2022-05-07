@@ -126,7 +126,7 @@ router.get("/listAnime/page/:pageNumber", async (req, res) => {
   }
 });
 
-// Route to add the animes to the different lists a user has
+// Route to add the animes to the different lists a user has in their profile
 router.get("/addList/:id/:listOption", authenticate, async (req, res) => {
   try {
     const listOp = req.params.listOption;
