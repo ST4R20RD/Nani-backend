@@ -10,8 +10,23 @@ mongoose.connect(process.env.MONGO_DB_URL);
 
 const app = express();
 
-// Use cors so the backend can communicate with the frontend
-app.use(cors());
+/* require('./passport/facebook-auth'); */
+
+// Code for LOCALHOST
+/* app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:3000",
+  })
+); */
+
+// Code for NETLIFY and HEROKU
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.ORIGIN,
+  })
+);
 
 app.use(express.json());
 
@@ -49,7 +64,7 @@ const server = require("http").createServer(app);
 
 const io = require("socket.io")(server, {
   cors: {
-    origin: "https://nani-app.netlify.app",
+    origin: process.env.ORIGIN,
   },
 });
 
